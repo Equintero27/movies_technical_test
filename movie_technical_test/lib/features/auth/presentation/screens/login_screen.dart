@@ -43,7 +43,7 @@ final passwordRegex = RegExp(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$&*~/]).{8,}$');
                       return "Por favor ingrese un valor";
                     }
                     if(!passwordRegex.hasMatch(value)){
-                      return "Ingrese mínimo 8 caracteres, 1 número, 1 letra mayúscula y un caracter especial";
+                      return "Ingrese mínimo 8 caracteres, 1 número, 1 letra mayúscula\ny un caracter especial";
                     }
                     return null;
                   },
