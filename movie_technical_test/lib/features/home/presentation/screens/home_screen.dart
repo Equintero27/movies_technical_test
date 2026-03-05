@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_technical_test/core/network/dio_client.dart';
 import 'package:movie_technical_test/features/home/data/datasources/movie_remote_datasource.dart';
 import 'package:movie_technical_test/features/home/data/repositories/movie_repository_impl.dart';
 import 'package:movie_technical_test/features/home/domain/usescases/get_popular_movies_usescase.dart';
 import 'package:movie_technical_test/features/home/presentation/cubit/home_cubit.dart';
 import 'package:movie_technical_test/features/home/presentation/cubit/home_state.dart';
+
 
 class HomeScreen extends StatelessWidget{
   const HomeScreen({super.key});
@@ -30,6 +32,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(title: const Text ("Peliculas populares"),
+      centerTitle: true,
       ),
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
@@ -51,12 +54,16 @@ class HomeView extends StatelessWidget {
             itemCount: state.movies.length,
             itemBuilder: (context, index){
               final movie = state.movies[index];
-              
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
-                  child: SizedBox(
-                    height: 400,
-                    child: ClipRRect(
+
+                return GestureDetector(
+                  onTap: () {
+                    context.push('/movie', extra: movie);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+                    child: Hero(
+                      tag: movie.id,
+                      child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.network(
                         movie.posterPath.isNotEmpty ? 
@@ -65,8 +72,9 @@ class HomeView extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    ),
                   ),
-                );
+                  );
               },
             );
           }
