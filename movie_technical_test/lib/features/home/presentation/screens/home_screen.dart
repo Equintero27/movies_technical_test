@@ -7,6 +7,7 @@ import 'package:movie_technical_test/features/home/data/repositories/movie_repos
 import 'package:movie_technical_test/features/home/domain/usescases/get_popular_movies_usescase.dart';
 import 'package:movie_technical_test/features/home/presentation/cubit/home_cubit.dart';
 import 'package:movie_technical_test/features/home/presentation/cubit/home_state.dart';
+import 'package:movie_technical_test/features/profile/presentation/screens/profile_screen.dart';
 
 
 class HomeScreen extends StatelessWidget{
@@ -33,7 +34,20 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text ("Peliculas populares"),
       centerTitle: true,
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.person),
+          onPressed: () {
+            Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const ProfileScreen(),
+          ),
+        );
+      },
+    ),
+  ],
+),
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           if (state is HomeLoading){
