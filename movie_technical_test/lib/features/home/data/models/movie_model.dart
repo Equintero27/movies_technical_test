@@ -12,7 +12,7 @@ class MovieModel extends MovieEntity{
     return MovieModel (
     id: json['id'], 
     title: json['title'],
-    posterPath: json['posterPath'] ?? '',
+    posterPath: json['poster_path'] ?? '',
     overView: json['overView'] ?? '',
     );
   }
