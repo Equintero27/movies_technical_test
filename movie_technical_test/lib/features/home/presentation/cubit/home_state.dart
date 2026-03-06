@@ -7,8 +7,9 @@ class HomeLoading extends HomeState{}
 
 class HomeLoaded extends HomeState{
   final List <MovieEntity>  movies;
+  final bool isOffline;
 
-  HomeLoaded(this.movies);
+  HomeLoaded(this.movies, {this.isOffline = false});
 }
 
 class HomeError extends HomeState{
