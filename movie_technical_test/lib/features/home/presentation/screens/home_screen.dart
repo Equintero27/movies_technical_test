@@ -1,6 +1,8 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movie_technical_test/core/network/connectivity_service.dart';
 import 'package:movie_technical_test/core/network/dio_client.dart';
 import 'package:movie_technical_test/features/home/data/datasources/movie_remote_datasource.dart';
 import 'package:movie_technical_test/features/home/data/repositories/movie_repository_impl.dart';
@@ -16,7 +18,8 @@ class HomeScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     final dio = DioClient().dio;
-    final remoteDataSource = MovieRemoteDatasource(dio);
+    final connectivity = ConnectivityService();
+    final remoteDataSource = MovieRemoteDatasource(dio, connectivity);
     final repository = MovieRepositoryImpl(remoteDataSource);
     final useCase = GetPopularMoviesUsescase(repository);
 
@@ -41,7 +44,7 @@ class HomeView extends StatelessWidget {
             Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const ProfileScreen(),
+            builder: (_) => ProfileScreen(),
           ),
         );
       },
@@ -58,8 +61,21 @@ class HomeView extends StatelessWidget {
 
           if (state is HomeError){
             return Center(
-              child: Text(state.message),
-              );
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    Icon(Icons.wifi_off_rounded, size: 40),
+                    SizedBox(height: 20),
+                    Text("Verifique su conexión a internet e intente nuevamente"),
+                    ElevatedButton(
+                        onPressed: (){
+                          context.read<HomeCubit>().fetchMovies();
+                        },
+                        child: const Text("Reintentar"),
+                    ),
+                ],
+              ),
+            );
           }
 
           if (state is HomeLoaded){
