@@ -23,8 +23,9 @@ class HomeScreen extends StatelessWidget{
     final repository = MovieRepositoryImpl(remoteDataSource);
     final useCase = GetPopularMoviesUsescase(repository);
 
-    return BlocProvider(create: (_) => HomeCubit(useCase)..fetchMovies(),
-    child: const HomeView(),
+    return BlocProvider(
+      create: (_) => HomeCubit(useCase, connectivity)..fetchMovies(),
+      child: const HomeView(),
     );
   }
 }
