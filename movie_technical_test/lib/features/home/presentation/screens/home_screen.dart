@@ -29,8 +29,45 @@ class HomeScreen extends StatelessWidget{
   }
 }
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+  class _HomeViewState extends State<HomeView> {
+    bool isOffline = false;
+
+    @override
+    void initState(){
+      super.initState();
+      checkInitialConnection();
+      listenConnectivity();
+    }
+
+    void checkInitialConnection() async {
+      final result = await Connectivity().checkConnectivity();
+
+      final hasConnection = 
+      result.contains(ConnectivityResult.mobile)||
+      result.contains(ConnectivityResult.wifi);
+
+      setState(() {
+        isOffline = !hasConnection;
+      });
+    }
+
+  void listenConnectivity() {
+  Connectivity().onConnectivityChanged.listen((results) {
+
+    final hasConnection = results.contains(ConnectivityResult.mobile) ||
+        results.contains(ConnectivityResult.wifi);
+
+    setState(() {
+      isOffline = !hasConnection;
+    });
+  });
+}
 
   @override
   Widget build(BuildContext context){
@@ -51,7 +88,21 @@ class HomeView extends StatelessWidget {
     ),
   ],
 ),
-      body: BlocBuilder<HomeCubit, HomeState>(
+      body: Column(
+        children: [
+          if(isOffline)
+          Container(
+            width: double.infinity,
+            color: Colors.red,
+            padding: const EdgeInsets.all(8),
+            child: const Text("Modo offline - mostrando datos guardados", 
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
+      ),
+      
+      Expanded(
+        child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           if (state is HomeLoading){
             return const Center(
@@ -79,37 +130,48 @@ class HomeView extends StatelessWidget {
           }
 
           if (state is HomeLoaded){
-          return PageView.builder(
-            controller: PageController(viewportFraction: 0.8),
-            itemCount: state.movies.length,
-            itemBuilder: (context, index){
-              final movie = state.movies[index];
-
-                return GestureDetector(
-                  onTap: () {
-                    context.push('/movie', extra: movie);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
-                    child: Hero(
-                      tag: movie.id,
-                      child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        movie.posterPath.isNotEmpty ? 
-                        "https://image.tmdb.org/t/p/w500${movie.posterPath}"
-                        : "https://via.placeholder.com/300x450",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    ),
-                  ),
-                  );
+            return RefreshIndicator(
+              onRefresh: () async{
+                context.read<HomeCubit>().fetchMovies();
               },
-            );
-          }
-          return const SizedBox();
-        },
+                child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.85,
+                    child: PageView.builder(
+                    controller: PageController(viewportFraction: 0.8),
+                    itemCount: state.movies.length,
+                    itemBuilder: (context, index){
+                      final movie = state.movies[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            context.push('/movie', extra: movie);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+                            child: Hero(
+                              tag: movie.id,
+                              child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(
+                                movie.posterPath.isNotEmpty ? 
+                                "https://image.tmdb.org/t/p/w500${movie.posterPath}"
+                                : "https://via.placeholder.com/300x450",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            ),
+                          ),
+                          );
+                      },
+                    ),
+                    ),
+          );
+        }
+                  return const SizedBox();
+                },
+              ),
+            ),
+        ],
       ),
     );
   }
