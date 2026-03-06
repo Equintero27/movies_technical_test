@@ -36,8 +36,6 @@ dependencies:
   go_router: ^17.1.0
   dio: ^5.4.0
   connectivity_plus: ^7.0.0
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
   path_provider: ^2.1.1
   flutter_secure_storage: ^10.0.0
   package_info_plus: ^9.0.0
@@ -51,9 +49,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  build_runner:
-  isar_generator:
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.3
   
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
