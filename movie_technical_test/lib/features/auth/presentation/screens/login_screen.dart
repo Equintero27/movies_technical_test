@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordRegex =
       RegExp(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$&*~/]).{8,}$');
 
-  bool obscurePassword = true; // 👈 NUEVO
+  bool obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +55,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 TextFormField(
                   controller: password,
-                  obscureText: obscurePassword, // 👈 CAMBIO
+                  obscureText: obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Contraseña",
 
-                    // 👁️ icono mostrar/ocultar
                     suffixIcon: IconButton(
                       icon: Icon(
                         obscurePassword
